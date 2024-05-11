@@ -41,11 +41,12 @@ public class FailistLugemine {
         }
         //võtab vastu skoorid mida kogu skoorile lisada ja lisab neid faili
         public static void lisaSkoorile(int võidud, int kaotatud, String failinimi){
+            String failinimi2 = "skoor.txt";
             int uusVõidud = võidud;
             int uusKaotatud = kaotatud;
             //loeb failist vana skoori ja lisab sellele uued skoorid
             try {
-                BufferedReader scanner = new BufferedReader(new FileReader(failinimi));
+                BufferedReader scanner = new BufferedReader(new FileReader(failinimi2));
                 String[] skoorid = scanner.readLine().split(" ");
                 uusVõidud = võidud + Integer.valueOf(skoorid[0]);
                 uusKaotatud = kaotatud + Integer.valueOf(skoorid[1]);
@@ -56,7 +57,7 @@ public class FailistLugemine {
             //kirjutab faili uue skoori
             String midaFaili = uusVõidud+" "+uusKaotatud;
             try {
-                BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi,false));
+                BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2,false));
                 kirjutaja.write(midaFaili);
                 kirjutaja.close();
             }catch (IOException e){
