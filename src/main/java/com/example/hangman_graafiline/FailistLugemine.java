@@ -1,10 +1,13 @@
 package com.example.hangman_graafiline;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class FailistLugemine {
         public static String failinimi = "lemmad.txt";
         public static long failiPikkus = 104230;
+    public static ArrayList<String> sõnasOlevadTähed = new ArrayList<>();
         // kui on vaja saab Objekti luua, millel on teine fail salvestatud millega saab siis ka mängida kui formaat sobib
         public FailistLugemine(String failinimi) {
             FailistLugemine.failinimi = failinimi;
@@ -14,7 +17,7 @@ public class FailistLugemine {
             String sõna = "";
             long millineRida = (long)(Math.random()*failiPikkus+1);
             try {
-                BufferedReader scanner = new BufferedReader(new FileReader(failinimi));
+                BufferedReader scanner = new BufferedReader(new FileReader(failinimi, StandardCharsets.UTF_8));
                 for (int i = 0; i < millineRida; i++) {
                     scanner.readLine();
                 }
@@ -23,6 +26,7 @@ public class FailistLugemine {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
             return sõna;
         }
         //võtab failist skoorid ja tagastab String nendega
