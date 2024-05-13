@@ -28,10 +28,11 @@ import java.util.Locale;
  */
 public class HangmanMäng2 extends Application {
     private static int valestiArvamisiKokku;
-    private static ArrayList<String> möödaPakutudTähed = new ArrayList<>();
+    private static ArrayList<String> pakutudTähedPihtas = new ArrayList<>();
     private static String arvatavSõna;
     private static Pane hangman;
-    public static StringBuilder veelSõnasArvamataTähti;
+    private int võidud;
+    private int kaotused;
 
     @Override
     public void start(Stage peaLava) {
@@ -97,10 +98,11 @@ public class HangmanMäng2 extends Application {
     }
     private void uusMäng(Stage peaLava2) {
         arvatavSõna = FailistLugemine.annaJuhuslikSõna();
-        //StringBuilder veelSõnasArvamataTähti = new StringBuilder(arvatavSõna);
-
         valestiArvamisiKokku = 0;
-        möödaPakutudTähed.clear(); //kustutab varasemalt pakutud
+        pakutudTähedPihtas.clear(); //kustutab varasemalt pakutud
+
+       võidud = FailistLugemine.getVõidud();
+       kaotused = FailistLugemine.getKaotused();
 
         FlowPane mängPaan = new FlowPane();
 
@@ -129,11 +131,13 @@ public class HangmanMäng2 extends Application {
         katkestaMäng.setOnMouseClicked(event -> {
             peaLava2.close();
             start(peaLava2);
-        }); //lihtsalt
-        Button salvestaMäng = new Button("Salvesta skoor");
-        katkestaMäng.setOnAction(event -> {
-            //FailistLugemine.lisaSkoorile();
         });
+
+        Button salvestaMäng = new Button("Salvesta skoor");
+        salvestaMäng.setOnAction(event -> {
+            FailistLugemine.lisaSkoorile(võidud, kaotused, "skoor.txt");
+        });
+
         Button alustaUuesti = new Button("Alusta uuesti");
         alustaUuesti.setOnAction(event -> {
             Stage uuslava = new Stage();
@@ -161,7 +165,7 @@ public class HangmanMäng2 extends Application {
 
     private void pakutudTähed(String pakutudTäht) {
         if (pakutudTäht.length() == 1 && Character.isLetter(pakutudTäht.charAt(0))) {
-            möödaPakutudTähed.add(pakutudTäht);
+            pakutudTähedPihtas.add(pakutudTäht);
             if (!arvatavSõna.toLowerCase(Locale.ROOT).contains(pakutudTäht)) {
                 valestiArvamisiKokku++;
                 joonistaPilt();
@@ -173,23 +177,13 @@ public class HangmanMäng2 extends Application {
         StringBuilder peidetavSõna = new StringBuilder();
         for (int i = 0; i < arvatavSõna.length(); i++) {
             String täht = String.valueOf(arvatavSõna.charAt(i));
-            if (möödaPakutudTähed.contains(täht.toLowerCase(Locale.ROOT))) {
+            if (pakutudTähedPihtas.contains(täht.toLowerCase(Locale.ROOT))) {
                 peidetavSõna.append(täht).append(" ");
-                //veelSõnasArvamataTähti.deleteCharAt(i);
             } else {
                 peidetavSõna.append("_ ");
             }
         }
         String sõnaPeidetud = peidetavSõna.toString();
-        int luger = 0;
-        for (String s : möödaPakutudTähed) {
-            if (!s.equals("_ ")) {
-                luger++;
-            }
-        }
-        if (luger == 0) {
-            arvatavaSõnaRida.setText("Arvasid sõna ära!");
-        }
         return sõnaPeidetud;
     }
 
@@ -199,6 +193,7 @@ public class HangmanMäng2 extends Application {
         }
         else {
             arvatavaSõnaRida.setText("Õige sõna oli: " + arvatavSõna);
+            kaotused++;
         }
     }
 
@@ -243,4 +238,5 @@ public class HangmanMäng2 extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }
