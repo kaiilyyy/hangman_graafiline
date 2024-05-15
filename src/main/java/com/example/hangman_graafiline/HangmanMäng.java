@@ -1,6 +1,9 @@
 package com.example.hangman_graafiline;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.scene.layout.*;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,25 +11,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Locale;
 
-/**
- * vaja veel teha:
- * FAILI VAHETAMINE ALGUSES
- * SKOORI SALVESTAMINE FAILI (NING EKRAANILE SKOORI LUGEMINE)
- *
- */
-public class HangmanMäng2 extends Application {
+public class HangmanMäng extends Application {
     private static int valestiArvamisiKokku;
     private static ArrayList<String> pakutudTähedPihtas = new ArrayList<>();
     private static String arvatavSõna;
@@ -68,33 +62,50 @@ public class HangmanMäng2 extends Application {
         näitaSkoori.setOnAction(event -> {
             näitabSkoori();
         });
-        Button tühistaNupp = new Button("Tühista");
+        Button kustutaSkoor = new Button("Kustuta skoor");
+        kustutaSkoor.setLayoutX(40);
+        kustutaSkoor.setLayoutY(100);
+        kustutaSkoor.setFont(Font.font(20));
+        kustutaSkoor.setOnAction(event -> {
+            FailistLugemine.nulliSkoor(0, 0, "skoor.txt");
+        });
+        Button tühistaNupp = new Button("Katkesta mäng");
         tühistaNupp.setFont(Font.font(20));
         tühistaNupp.setOnAction(event -> {
             peaLava.close();
         });
-        hbox.getChildren().addAll(alustaNupp, näitaSkoori, tühistaNupp);
+        hbox.getChildren().addAll(alustaNupp, näitaSkoori, kustutaSkoor, tühistaNupp);
 
         esimeneJuur.getChildren().addAll(pealkiri, valiTegevus, hbox);
 
         Scene stseen = new Scene(esimeneJuur, 800, 600);
         peaLava.setScene(stseen);
+        peaLava.setMinHeight(300);
+        peaLava.setMinWidth(300);
         peaLava.show();
     }
     private void näitabSkoori() {
         Stage skooriLava = new Stage();
-        skooriLava.setTitle("Skoorid");
+        skooriLava.setTitle("Punktiseis");
+        skooriLava.setResizable(false);
 
         Text skoorid = new Text(FailistLugemine.annaSkoori("skoor.txt"));
         skoorid.setFont(Font.font(16));
+        skoorid.setStroke(Color.DARKRED);
 
         HBox skooriJuur = new HBox();
         skooriJuur.setAlignment(Pos.CENTER);
         skooriJuur.getChildren().add(skoorid);
 
         Scene skooriStseen = new Scene(skooriJuur, 200, 200);
+        skooriJuur.setStyle("-fx-background-color: pink");
         skooriLava.setScene(skooriStseen);
         skooriLava.show();
+        PauseTransition paus = new PauseTransition(Duration.seconds(2.5));
+        paus.setOnFinished(event -> {
+            skooriLava.close();
+        });
+        paus.play();
     }
     private void uusMäng(Stage peaLava2) {
         arvatavSõna = FailistLugemine.annaJuhuslikSõna();
@@ -113,38 +124,46 @@ public class HangmanMäng2 extends Application {
         mängPaan.setStyle("-fx-background-color: pink");
 
         Scene stseen2 = new Scene(mängPaan, 800, 600);
-        peaLava2.setResizable(false);
+        peaLava2.setResizable(true);
         peaLava2.setScene(stseen2);
-        Label sõnaPakutav = new Label();
 
-        Label sõnaPakutud = new Label("Sõna: " + sõnaPeidetud(sõnaPakutav));
+        Label sõnaPakutud = new Label("Sõna: " + sõnaPeidetud());
         sõnaPakutud.setFont(Font.font(40));
 
-        TextField pakutudTäht = new TextField();
-        pakutudTäht.setOnKeyReleased(event -> { //kui vajutatakse enterit siis töötab ka
-            pakutudTähed(pakutudTäht.getText().toLowerCase(Locale.ROOT));
+        TextField pakuTäht = new TextField();
+        pakuTäht.setOnKeyReleased(event -> {
+            pakutudTähed(pakuTäht.getText().toLowerCase(Locale.ROOT));
             uuendaRida(sõnaPakutud);
-            pakutudTäht.clear(); //kustutab lahtrist tähe
+            pakuTäht.clear(); //kustutab lahtrist just sisestatud tähe
         });
-
+        HBox nupud = new HBox();
+        nupud.setSpacing(20);
         Button katkestaMäng = new Button("Tagasi avaekraanile");
+        katkestaMäng.setFont(Font.font(13));
+        katkestaMäng.setTextFill(Color.DARKBLUE);
         katkestaMäng.setOnMouseClicked(event -> {
             peaLava2.close();
             start(peaLava2);
         });
 
-        Button salvestaMäng = new Button("Salvesta skoor");
-        salvestaMäng.setOnAction(event -> {
-            FailistLugemine.lisaSkoorile(võidud, kaotused, "skoor.txt");
+        Button vaataSkoori = new Button("Vaata skoori");
+        vaataSkoori.setFont(Font.font(13));
+        vaataSkoori.setTextFill(Color.DARKBLUE);
+        vaataSkoori.setOnAction(event -> {
+            näitabSkoori();
         });
 
         Button alustaUuesti = new Button("Alusta uuesti");
+        alustaUuesti.setFont(Font.font(12));
+        alustaUuesti.setTextFill(Color.DARKBLUE);
         alustaUuesti.setOnAction(event -> {
+            FailistLugemine.lisaSkoorile(võidud, kaotused, "skoor.txt");
             Stage uuslava = new Stage();
             uusMäng(uuslava);
             peaLava2.hide();
             uuslava.show();
         });
+        nupud.getChildren().addAll(katkestaMäng, vaataSkoori, alustaUuesti);
 
         hangman = new Pane();
 
@@ -159,26 +178,38 @@ public class HangmanMäng2 extends Application {
         ülemineRida.setVisible(true);
 
         hangman.getChildren().addAll(alumineRida, paremPost, ülemineRida);
+        mängPaan.setAlignment(Pos.CENTER);
+        mängPaan.getChildren().addAll(sõnaPakutud, pakuTäht, nupud, hangman);
 
-        mängPaan.getChildren().addAll(sõnaPakutud, pakutudTäht, katkestaMäng, salvestaMäng, alustaUuesti, hangman);
+        peaLava2.widthProperty().addListener((obs, vanaLaius, uusLaius) -> {
+            hangman.setPrefWidth(uusLaius.doubleValue() * 0.5);
+            sõnaPakutud.setFont(Font.font(uusLaius.doubleValue() / 20));
+            pakuTäht.setPrefWidth(uusLaius.doubleValue() * 0.2);
+            nupud.setPrefWidth(uusLaius.doubleValue() * 0.5);
+        });
+        peaLava2.heightProperty().addListener((obs, vanaKõrgus, uusKõrgus) -> {
+            hangman.setPrefHeight(uusKõrgus.doubleValue() * 0.5);
+            sõnaPakutud.setFont(Font.font(uusKõrgus.doubleValue() / 20));
+            nupud.setPrefWidth(uusKõrgus.doubleValue() * 0.5);
+        });
+
     }
 
-    private void pakutudTähed(String pakutudTäht) {
-        if (pakutudTäht.length() == 1 && Character.isLetter(pakutudTäht.charAt(0))) {
-            pakutudTähedPihtas.add(pakutudTäht);
-            if (!arvatavSõna.toLowerCase(Locale.ROOT).contains(pakutudTäht)) {
-                valestiArvamisiKokku++;
-                joonistaPilt();
+    private void pakutudTähed(String pakutudTäht){
+            if (pakutudTäht.length() == 1 && Character.isLetter(pakutudTäht.charAt(0))) {
+                pakutudTähedPihtas.add(pakutudTäht);
+                if (!arvatavSõna.toLowerCase(Locale.ROOT).contains(pakutudTäht)) {
+                    valestiArvamisiKokku++;
+                    joonistaPilt();
+                }
             }
-        }
     }
-
-    private String sõnaPeidetud(Label arvatavaSõnaRida) {
+    private static String sõnaPeidetud() {
         StringBuilder peidetavSõna = new StringBuilder();
         for (int i = 0; i < arvatavSõna.length(); i++) {
             String täht = String.valueOf(arvatavSõna.charAt(i));
             if (pakutudTähedPihtas.contains(täht.toLowerCase(Locale.ROOT))) {
-                peidetavSõna.append(täht).append(" ");
+                peidetavSõna.append(täht).append("");
             } else {
                 peidetavSõna.append("_ ");
             }
@@ -187,25 +218,36 @@ public class HangmanMäng2 extends Application {
         return sõnaPeidetud;
     }
 
-    private void uuendaRida(Label arvatavaSõnaRida) { //uuendab ekraanil olevat arvatudJaArvamata rida
-        if (valestiArvamisiKokku < 7) {
-            arvatavaSõnaRida.setText("Sõna: " + sõnaPeidetud(arvatavaSõnaRida));
+    private static boolean kontrolliKasSamad(String esimene, String teine) {
+        if (esimene.equals(teine)) return true;
+        else return false;
+    }
+
+    private void uuendaRida(Label arvatavaSõnaRida) {
+        String peidetudSõna = sõnaPeidetud();
+        String võrdlus = peidetudSõna.replace(" ", "");
+
+        if (kontrolliKasSamad(arvatavSõna, võrdlus)) {
+            arvatavaSõnaRida.setText("Arvasid sõna " + arvatavSõna + " ära");
+            võidud += 1;
+        }
+        else if (valestiArvamisiKokku < 7) {
+            arvatavaSõnaRida.setText("Sõna: " + sõnaPeidetud());
         }
         else {
             arvatavaSõnaRida.setText("Õige sõna oli: " + arvatavSõna);
-            kaotused++;
+            kaotused += 1;
         }
     }
 
     private static void joonistaPilt() {
-
         if (valestiArvamisiKokku >= 1) {
             Line vasakPost = new Line(150, 50, 150, 120);
             hangman.getChildren().add(vasakPost);
         }
         if (valestiArvamisiKokku >= 2) {
             Circle pea = new Circle(150, 120, 20);
-            pea.setFill(Color.RED);
+            pea.setStroke(Color.BLACK);
             hangman.getChildren().add(pea);
         }
         if (valestiArvamisiKokku >= 3) {
@@ -226,12 +268,11 @@ public class HangmanMäng2 extends Application {
         }
         if (valestiArvamisiKokku >= 7) {
             Line paremJalg = new Line(150, 200, 170, 240);
-            hangman.getChildren().add(paremJalg);
             Text lõpp = new Text("Kaotasid!");
             lõpp.setFont(Font.font(70));
             lõpp.setLayoutY(200);
             lõpp.setLayoutX(20);
-            hangman.getChildren().add(lõpp);
+            hangman.getChildren().addAll(paremJalg, lõpp);
         }
     }
 

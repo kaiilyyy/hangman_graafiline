@@ -72,6 +72,21 @@ public class FailistLugemine {
             throw new RuntimeException(e);
         }
     }
+    public static void nulliSkoor(int võidud, int kaotatud, String failinimi){
+        String failinimi2 = "skoor.txt";
+        int uusVõidud = 0;
+        int uusKaotatud = 0;
+
+        String uuedAndmed = uusVõidud + " " + uusKaotatud;
+        try {
+            BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2,false));
+            kirjutaja.write(uuedAndmed);
+            kirjutaja.close();
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+    }
+
     public String getFailinimi() {
         return failinimi;
     }
