@@ -4,22 +4,24 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class FailistLugemine {
-        public static String failinimi = "lemmad.txt";
-        public static long failiPikkus = 104230;
-        public static int võidud;
-        public static int kaotused;
+/**
+ * rühmatöö 1 raames tehtud klass
+ */
 
-    public static ArrayList<String> sõnasOlevadTähed = new ArrayList<>();
-        // kui on vaja saab Objekti luua, millel on teine fail salvestatud millega saab siis ka mängida kui formaat sobib
+public class FailistLugemine {
+    public static String failinimi = "lemmad.txt";
+    public static long failiPikkus = 104188;
+    public static int võidud;
+    public static int kaotused;
 
     public FailistLugemine(String failinimi) {
-            FailistLugemine.failinimi = failinimi;
+        FailistLugemine.failinimi = failinimi;
     }
-        // loeme juhusliku sõna failist ja tagastame
-    public static String annaJuhuslikSõna(){
+
+    // loeme juhusliku sõna failist ja tagastame
+    public static String annaJuhuslikSõna() {
         String sõna = "";
-        long millineRida = (long)(Math.random()*failiPikkus+1);
+        long millineRida = (long) (Math.random() * failiPikkus + 1);
         try {
             BufferedReader scanner = new BufferedReader(new FileReader(failinimi, StandardCharsets.UTF_8));
             for (int i = 0; i < millineRida; i++) {
@@ -30,25 +32,26 @@ public class FailistLugemine {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         return sõna;
     }
+
     //võtab failist skoorid ja tagastab String nendega
-    public static String annaSkoori(String failinimi){
+    public static String annaSkoori(String failinimi) {
         String skoorid;
         try {
             BufferedReader scanner = new BufferedReader(new FileReader(failinimi));
             String[] skoorideMassiiv = scanner.readLine().split(" ");
             skoorid = "võidud " + skoorideMassiiv[0];
-            skoorid = skoorid + " kaotatud "+ skoorideMassiiv[1];
+            skoorid = skoorid + " kaotatud " + skoorideMassiiv[1];
             scanner.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return skoorid;
     }
+
     //võtab vastu skoorid mida kogu skoorile lisada ja lisab neid faili
-    public static void lisaSkoorile(int võidud, int kaotatud, String failinimi){
+    public static void lisaSkoorile(int võidud, int kaotatud, String failinimi) {
         String failinimi2 = "skoor.txt";
         int uusVõidud = võidud;
         int uusKaotatud = kaotatud;
@@ -63,40 +66,29 @@ public class FailistLugemine {
             throw new RuntimeException(e);
         }
         //kirjutab faili uue skoori
-        String midaFaili = uusVõidud+" "+uusKaotatud;
+        String midaFaili = uusVõidud + " " + uusKaotatud;
         try {
-            BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2,false));
+            BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2, false));
             kirjutaja.write(midaFaili);
             kirjutaja.close();
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    public static void nulliSkoor(int võidud, int kaotatud, String failinimi){
+
+    public static void nulliSkoor(int võidud, int kaotatud, String failinimi) {
         String failinimi2 = "skoor.txt";
         int uusVõidud = 0;
         int uusKaotatud = 0;
 
         String uuedAndmed = uusVõidud + " " + uusKaotatud;
         try {
-            BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2,false));
+            BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2, false));
             kirjutaja.write(uuedAndmed);
             kirjutaja.close();
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public String getFailinimi() {
-        return failinimi;
-    }
-
-    public void setFailinimi(String failinimi) {
-        this.failinimi = failinimi;
-    }
-
-    public long getFailiPikkus() {
-        return failiPikkus;
     }
 
     public static int getVõidud() {
@@ -106,8 +98,6 @@ public class FailistLugemine {
     public static int getKaotused() {
         return kaotused;
     }
+}
 
-    public void setFailiPikkus(long failiPikkus) {
-            FailistLugemine.failiPikkus = failiPikkus;
-        }
-    }
+
