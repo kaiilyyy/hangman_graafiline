@@ -8,6 +8,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+import static com.example.hangman_graafiline.HangmanMäng.punktisumma;
+
 /**
  * rühmatöö 1 raames tehtud klass
  */
@@ -17,6 +19,7 @@ public class FailistLugemine {
     public static long failiPikkus = 104188;
     public static int võidud;
     public static int kaotused;
+    //public static int punktisumma;
 
     public FailistLugemine(String failinimi) {
         FailistLugemine.failinimi = failinimi;
@@ -47,6 +50,7 @@ public class FailistLugemine {
             String[] skoorideMassiiv = scanner.readLine().split(" ");
             skoorid = "võidud " + skoorideMassiiv[0];
             skoorid = skoorid + " kaotatud " + skoorideMassiiv[1];
+            //skoorid = "punktisumma" + skoorideMassiiv[2];
             scanner.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -55,10 +59,11 @@ public class FailistLugemine {
     }
 
     //võtab vastu skoorid, mida koguskoorile lisada ja lisab need faili
-    public static void lisaSkoorile(int võidud, int kaotatud, String failinimi) {
+    public static void lisaSkoorile(int võidud, int kaotatud, int punktisumma, String failinimi) {
         String failinimi2 = "skoor.txt";
         int uusVõidud = võidud; //kui need ära võtta siis hakkab valesti skoori arvutama
         int uusKaotatud = kaotatud;
+        int uusPunktisumma = punktisumma;
 
         //loeb failist vana skoori ja lisab uute skooride arvestusse ka vana skoori
         try {
@@ -66,12 +71,13 @@ public class FailistLugemine {
             String[] skoorid = scanner.readLine().split(" ");
             uusVõidud = võidud + Integer.valueOf(skoorid[0]);
             uusKaotatud = kaotatud + Integer.valueOf(skoorid[1]);
+            uusPunktisumma = punktisumma + Integer.valueOf(skoorid[2]);
             scanner.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         //kirjutab faili uue skoori (kus sees varasemalt olnud skoorid ka)
-        String midaFaili = uusVõidud + " " + uusKaotatud;
+        String midaFaili = uusVõidud + " " + uusKaotatud + " " + uusPunktisumma;
         try {
             BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2, false)); //kui true siis hakkab kõrvale kirjutama (valesid) numbreid
             kirjutaja.write(midaFaili);
@@ -88,8 +94,9 @@ public class FailistLugemine {
         String failinimi2 = "skoor.txt";
         int uusVõidud = 0;
         int uusKaotatud = 0;
+        int uusPunktisumma = 100;
 
-        String uuedAndmed = uusVõidud + " " + uusKaotatud;
+        String uuedAndmed = uusVõidud + " " + uusKaotatud + " " + uusPunktisumma;
         try {
             BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2, false));
             kirjutaja.write(uuedAndmed);
@@ -107,7 +114,9 @@ public class FailistLugemine {
         return kaotused;
     }
 
-
+    public static int getPunktisumma() {
+        return punktisumma;
+    }
 }
 
 

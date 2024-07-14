@@ -4,6 +4,7 @@ import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Box;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
@@ -17,7 +18,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -33,10 +33,8 @@ public class HangmanMäng extends Application {
     public static Pane hangmanPane;
     public static int võidud;
     public static int kaotused;
+    public static int punktisumma;
 
-    /**
-     * mängu avaaken
-     */
     @Override
     public void start(Stage peaLava) throws FileNotFoundException {
 
@@ -137,6 +135,7 @@ public class HangmanMäng extends Application {
         leiaVihje(arvatavSõna.toString());
         valestiArvamisiKokku = 0;
         pakutudTähedPihtas.clear(); //kustutab varasemalt pakutud
+
         /////////////////////////////////////
         Text vihjeKast = new Text(vihje.toString());
         vihjeKast.setFont(Font.font(20));
@@ -144,12 +143,10 @@ public class HangmanMäng extends Application {
         vihjeKast.setFill(Color.BLACK);
         vihjeKast.setVisible(false);
 
-
         double wrappingWidth = 200;
         vihjeKast.setWrappingWidth(wrappingWidth);
 
         if (vihje.length() > 20) {
-            // Split the text into multiple lines
             String wrappedText = Meetodid.wrapText(vihje.toString(), 20);
             vihjeKast.setText(wrappedText);
         }
@@ -157,8 +154,8 @@ public class HangmanMäng extends Application {
             vihjeKast.setText("Vihje puudub");
         /////////////////////////////////////////////////////
 
-       võidud = FailistLugemine.getVõidud();
-       kaotused = FailistLugemine.getKaotused();
+        võidud = FailistLugemine.getVõidud();
+        kaotused = FailistLugemine.getKaotused();
 
         VBox mänguPaikneminePane = new VBox();
 
@@ -218,7 +215,7 @@ public class HangmanMäng extends Application {
         alustaUuesti.setFont(Font.font(12));
         alustaUuesti.setTextFill(Color.DARKBLUE);
         alustaUuesti.setOnAction(event -> {
-            FailistLugemine.lisaSkoorile(võidud, kaotused, "skoor.txt");
+            FailistLugemine.lisaSkoorile(võidud, kaotused, punktisumma, "skoor.txt");
             Stage uuslava = new Stage();
             try {
                 uusMäng(uuslava);
@@ -230,7 +227,6 @@ public class HangmanMäng extends Application {
         });
         nupud.getChildren().addAll(katkestaMäng, vaataSkoori, alustaUuesti);
 
-
         hangmanPane = new Pane();
         //ülesehitus (alati nähtavad postid)
         Line alumineRida = new Line(250, 300, 350, 300); //x algus, y algus, x lõpp, y lõpp//
@@ -241,27 +237,29 @@ public class HangmanMäng extends Application {
 
         HBox hangmanPaneKeskele = new HBox();
 
-        Button vihjenupp = new Button("Vihje");
+        Button vihjenupp = new Button("Vihje (-30p)");
         vihjenupp.setLayoutX(40);
         vihjenupp.setAlignment(Pos.TOP_CENTER);
         vihjenupp.setFont(Font.font(20));
         vihjenupp.setOnAction(event -> {
+            punktisumma -= 30;
             if (vihjeKast.isVisible())
             vihjeKast.setVisible(false);
             else
                 vihjeKast.setVisible(true);
         });
+        Text punktid = new Text();
+        punktid.setFont(Font.font(15));
+        punktid.setText(String.valueOf(punktisumma));
 
-        VBox vihjeElemendid = new VBox(vihjenupp, vihjeKast);
+        VBox vihjeElemendid = new VBox(vihjenupp, vihjeKast, punktid);
         vihjeElemendid.setPrefSize(200, 50);
 
         hangmanPaneKeskele.getChildren().addAll(vihjeElemendid,hangmanPane);
         hangmanPaneKeskele.setAlignment(Pos.CENTER);
 
-        mänguPaikneminePane.getChildren().addAll(sõnaPakutud, pakuTäht, nupud, hangmanPaneKeskele);
+        mänguPaikneminePane.getChildren().addAll(sõnaPakutud, pakuTäht, nupud,hangmanPaneKeskele);
         mänguPaikneminePane.setAlignment(Pos.CENTER);
-
-
 
         //muudab suurusi
         peaLava2.widthProperty().addListener((observableValue, vanaLaius, uusLaius) -> {

@@ -9,11 +9,8 @@ import javafx.scene.text.Text;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
-
 import java.io.IOException;
 import java.util.Locale;
-
 import static com.example.hangman_graafiline.HangmanMäng.*;
 
 public class Meetodid {
@@ -84,6 +81,7 @@ public class Meetodid {
 
     private static boolean kontrolliKasSamad(String esimene, String teine) {
         if (esimene.equals(teine)) {
+            punktisumma += 100;
             return true;
         }
         else {
@@ -148,6 +146,7 @@ public class Meetodid {
             lõpp.setFont(Font.font(70));
             lõpp.setLayoutY(200);
             lõpp.setLayoutX(20);
+            punktisumma -= 50;
             hangmanPane.getChildren().addAll(paremJalg, lõpp);
         }
     }
