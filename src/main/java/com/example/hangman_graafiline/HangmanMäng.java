@@ -4,7 +4,6 @@ import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Box;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
@@ -52,7 +51,7 @@ public class HangmanMäng extends Application {
         Background background = new Background(backgroundimage);
         esimeneJuur.setBackground(background);
 
-        Text pealkiri = new Text("HANGMAN");
+        Text pealkiri = new Text("HÄNGMÄNG");
         pealkiri.setFont(Font.font(40));
         Text valiTegevus = new Text("Vali tegevus: ");
         valiTegevus.setFont(Font.font(20));
@@ -94,16 +93,13 @@ public class HangmanMäng extends Application {
         peaLava.setY(20);
         peaLava.setX(150);
 
-        peaLava.setTitle("Hangman ");
+        peaLava.setTitle("Hängmäng ");
         peaLava.setMinHeight(300); //sellest väiksemaks ei lähe
         peaLava.setMinWidth(300);
 
         peaLava.show();
     }
 
-    /**
-     * skoori aken, näitab võite ja kaotusi, ja läheb ise kinni
-     */
     private void näitabSkoori() {
         Stage skooriLava = new Stage();
         skooriLava.setResizable(false);
@@ -136,18 +132,17 @@ public class HangmanMäng extends Application {
         valestiArvamisiKokku = 0;
         pakutudTähedPihtas.clear(); //kustutab varasemalt pakutud
 
-        /////////////////////////////////////
         Text vihjeKast = new Text(vihje.toString());
         vihjeKast.setFont(Font.font(20));
-        vihjeKast.setTextAlignment(TextAlignment.CENTER);
+        vihjeKast.setTextAlignment(TextAlignment.LEFT);
         vihjeKast.setFill(Color.BLACK);
         vihjeKast.setVisible(false);
 
         double wrappingWidth = 200;
         vihjeKast.setWrappingWidth(wrappingWidth);
 
-        if (vihje.length() > 20) {
-            String wrappedText = Meetodid.wrapText(vihje.toString(), 20);
+        if (vihje.length() > 30) {
+            String wrappedText = Meetodid.wrapText(vihje.toString(), 30);
             vihjeKast.setText(wrappedText);
         }
         else if (vihje == null)
@@ -238,7 +233,7 @@ public class HangmanMäng extends Application {
         HBox hangmanPaneKeskele = new HBox();
 
         Button vihjenupp = new Button("Vihje (-30p)");
-        vihjenupp.setLayoutX(40);
+        vihjenupp.setLayoutX(30);
         vihjenupp.setAlignment(Pos.TOP_CENTER);
         vihjenupp.setFont(Font.font(20));
         vihjenupp.setOnAction(event -> {
@@ -249,10 +244,12 @@ public class HangmanMäng extends Application {
                 vihjeKast.setVisible(true);
         });
         Text punktid = new Text();
-        punktid.setFont(Font.font(15));
-        punktid.setText(String.valueOf(punktisumma));
+        punktid.setFont(Font.font(20));
+        punktid.setText("Punktisumma: " + String.valueOf(punktisumma));
 
-        VBox vihjeElemendid = new VBox(vihjenupp, vihjeKast, punktid);
+        VBox vihjeElemendid = new VBox(punktid, vihjenupp, vihjeKast);
+        //vihjeElemendid.setPadding(new Insets(50));
+        vihjeElemendid.setSpacing(15);
         vihjeElemendid.setPrefSize(200, 50);
 
         hangmanPaneKeskele.getChildren().addAll(vihjeElemendid,hangmanPane);
@@ -275,7 +272,7 @@ public class HangmanMäng extends Application {
         });
         peaLava2.setMinHeight(550); //sellest väiksemaks ei lähe
         peaLava2.setMinWidth(450);
-        peaLava2.setTitle("Hangman");
+        peaLava2.setTitle("Hängmäng");
     }
     public static void main(String[] args) {
         launch(args);

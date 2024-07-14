@@ -35,7 +35,6 @@ public class Meetodid {
 
     public static String wrapText(String text, int lineLength) {
         StringBuilder sb = new StringBuilder(text);
-
         int i = 0;
         while (i + lineLength < sb.length() && (i = sb.lastIndexOf(" ", i + lineLength)) != -1) {
             sb.replace(i, i + 1, "\n");
