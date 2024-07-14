@@ -2,7 +2,9 @@ package com.example.hangman_graafiline;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,13 +13,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
+
 
 import static com.example.hangman_graafiline.Meetodid.sõnaPeidetud;
 
@@ -33,29 +39,39 @@ public class HangmanMäng extends Application {
      * mängu avaaken
      */
     @Override
-    public void start(Stage peaLava) {
-        peaLava.setTitle("Hangman mäng");
+    public void start(Stage peaLava) throws FileNotFoundException {
 
-        VBox esimeneJuur = new VBox(20);
+        VBox esimeneJuur = new VBox(20); //ülevalt alla
         esimeneJuur.setAlignment(Pos.CENTER);
         esimeneJuur.setPadding(new Insets(30));
 
-        esimeneJuur.setStyle("-fx-background-color: pink"); //css
+        InputStream taust = new FileInputStream("hangman_taust.jpg");
+        Image taustapilt = new Image(taust);
+        BackgroundImage backgroundimage = new BackgroundImage(taustapilt,
+                BackgroundRepeat.REPEAT,
+                BackgroundRepeat.REPEAT,
+                BackgroundPosition.CENTER,
+                BackgroundSize.DEFAULT);
+        Background background = new Background(backgroundimage);
+        esimeneJuur.setBackground(background);
 
         Text pealkiri = new Text("HANGMAN");
         pealkiri.setFont(Font.font(40));
         Text valiTegevus = new Text("Vali tegevus: ");
         valiTegevus.setFont(Font.font(20));
 
-        HBox nuppudeHbox = new HBox();
+        HBox nuppudeHbox = new HBox(); //vasakult paremale
         nuppudeHbox.setAlignment(Pos.CENTER);
-        nuppudeHbox.setPadding(new Insets(30));
         nuppudeHbox.setSpacing(20);
 
         Button alustaNupp = new Button("Alusta mängu");
         alustaNupp.setFont(Font.font(20));
         alustaNupp.setOnAction(event -> {
-            uusMäng(peaLava);
+            try {
+                uusMäng(peaLava);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         });
         Button näitaSkoori = new Button("Näita skoori");
         näitaSkoori.setFont(Font.font(20));
@@ -76,10 +92,15 @@ public class HangmanMäng extends Application {
 
         esimeneJuur.getChildren().addAll(pealkiri, valiTegevus, nuppudeHbox);
 
-        Scene stseen = new Scene(esimeneJuur, 800, 600);
+        Scene stseen = new Scene(esimeneJuur, 1000, 600);
         peaLava.setScene(stseen);
+        peaLava.setY(20);
+        peaLava.setX(150);
+
+        peaLava.setTitle("Hangman ");
         peaLava.setMinHeight(300); //sellest väiksemaks ei lähe
         peaLava.setMinWidth(300);
+
         peaLava.show();
     }
 
@@ -99,7 +120,7 @@ public class HangmanMäng extends Application {
         skooriJuur.getChildren().add(skoorid);
 
         Scene skooriStseen = new Scene(skooriJuur, 200, 200);
-        skooriJuur.setStyle("-fx-background-color: pink");
+        skooriJuur.setStyle("-fx-background-color: beige");
         skooriLava.setScene(skooriStseen);
         skooriLava.show();
         PauseTransition paus = new PauseTransition(Duration.seconds(2.5));
@@ -112,22 +133,38 @@ public class HangmanMäng extends Application {
     /**
      * põhiline aken, kus toimub kogu mängu sisu
      */
-    private void uusMäng(Stage peaLava2) {
+    private void uusMäng(Stage peaLava2) throws FileNotFoundException {
         arvatavSõna = FailistLugemine.annaJuhuslikSõna();
         valestiArvamisiKokku = 0;
         pakutudTähedPihtas.clear(); //kustutab varasemalt pakutud
+        /////////////////////////////////////
+        Text vihjeKast = new Text("SDFGNIVNFVIUNHV");
+        vihjeKast.setFont(Font.font(30));
+        vihjeKast.setTextAlignment(TextAlignment.CENTER);
+        vihjeKast.setFill(Color.BLACK);
+        vihjeKast.setVisible(false);
+        /////////////////////////////////////////////////////
 
        võidud = FailistLugemine.getVõidud();
        kaotused = FailistLugemine.getKaotused();
 
         VBox mänguPaikneminePane = new VBox();
 
-        mänguPaikneminePane.setPadding(new Insets(40));
+        InputStream taust = new FileInputStream("hangman_taust.jpg");
+        Image taustapilt = new Image(taust);
+        BackgroundImage backgroundimage = new BackgroundImage(taustapilt,
+                BackgroundRepeat.REPEAT,
+                BackgroundRepeat.REPEAT,
+                BackgroundPosition.CENTER,
+                BackgroundSize.DEFAULT);
+        Background background = new Background(backgroundimage);
+        mänguPaikneminePane.setBackground(background);
         mänguPaikneminePane.setSpacing(20);
         mänguPaikneminePane.setAlignment(Pos.CENTER);
-        mänguPaikneminePane.setStyle("-fx-background-color: pink");
 
-        Scene stseen2 = new Scene(mänguPaikneminePane, 800, 600);
+        Scene stseen2 = new Scene(mänguPaikneminePane, 1000, 600);
+        peaLava2.setY(20);
+        peaLava2.setX(150);
         peaLava2.setScene(stseen2);
 
         Label sõnaPakutud = new Label("Sõna: " + sõnaPeidetud());
@@ -151,7 +188,11 @@ public class HangmanMäng extends Application {
         katkestaMäng.setTextFill(Color.DARKBLUE);
         katkestaMäng.setOnMouseClicked(event -> {
             peaLava2.close();
-            start(peaLava2);
+            try {
+                start(peaLava2);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         Button vaataSkoori = new Button("Vaata skoori");
@@ -167,21 +208,50 @@ public class HangmanMäng extends Application {
         alustaUuesti.setOnAction(event -> {
             FailistLugemine.lisaSkoorile(võidud, kaotused, "skoor.txt");
             Stage uuslava = new Stage();
-            uusMäng(uuslava);
+            try {
+                uusMäng(uuslava);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             peaLava2.hide();
             uuslava.show();
         });
         nupud.getChildren().addAll(katkestaMäng, vaataSkoori, alustaUuesti);
 
+
         hangmanPane = new Pane();
         //ülesehitus (alati nähtavad postid)
-        Line alumineRida = new Line(250, 300, 350, 300);
+        Line alumineRida = new Line(250, 300, 350, 300); //x algus, y algus, x lõpp, y lõpp//
         Line paremPost = new Line(300, 50, 300, 300);
         Line ülemineRida = new Line(150, 50, 300, 50);
+
         hangmanPane.getChildren().addAll(alumineRida, paremPost, ülemineRida);
 
-        mänguPaikneminePane.getChildren().addAll(sõnaPakutud, pakuTäht, nupud, hangmanPane);
+        HBox hangmanPaneKeskele = new HBox();
+
+        Button vihjenupp = new Button("Vihje");
+        vihjenupp.setLayoutX(40);
+        vihjenupp.setAlignment(Pos.TOP_CENTER);
+        vihjenupp.setFont(Font.font(20));
+        vihjenupp.setOnAction(event -> {
+            if (vihjeKast.isVisible())
+            vihjeKast.setVisible(false);
+            else
+                vihjeKast.setVisible(true);
+        });
+
+        VBox vihjeElemendid = new VBox(vihjenupp, vihjeKast);
+        vihjeElemendid.setPrefSize(200, 50);
+        vihjeElemendid.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
+
+        hangmanPaneKeskele.getChildren().addAll(vihjeElemendid,hangmanPane);
+        hangmanPaneKeskele.setAlignment(Pos.CENTER);
+
+        mänguPaikneminePane.getChildren().addAll(sõnaPakutud, pakuTäht, nupud, hangmanPaneKeskele);
         mänguPaikneminePane.setAlignment(Pos.CENTER);
+
+        hangmanPane.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
+
 
         //muudab suurusi
         peaLava2.widthProperty().addListener((observableValue, vanaLaius, uusLaius) -> {
@@ -197,7 +267,7 @@ public class HangmanMäng extends Application {
         });
         peaLava2.setMinHeight(550); //sellest väiksemaks ei lähe
         peaLava2.setMinWidth(450);
-        peaLava2.setTitle("Hangman mäng");
+        peaLava2.setTitle("Hangman");
     }
     public static void main(String[] args) {
         launch(args);
