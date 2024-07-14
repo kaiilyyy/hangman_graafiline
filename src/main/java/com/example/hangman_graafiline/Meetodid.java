@@ -6,23 +6,59 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+
+import java.io.IOException;
 import java.util.Locale;
+
 import static com.example.hangman_graafiline.HangmanMäng.*;
 
 public class Meetodid {
+    public static String vihje;
+
+    public static void leiaVihje(String sõna) {
+        String url = "https://sonaveeb.ee/search/unif/dlall/dsall/" + arvatavSõna + "/1";
+
+        try {
+            Document lehekülg = Jsoup.connect(url).get();
+            Element esimeneTähendus = lehekülg.selectFirst("span.homonym-intro");
+            if (esimeneTähendus == null)
+                vihje = "Vihje puudub";
+            else
+                vihje = esimeneTähendus.text();
+
+        } catch (IOException e) {
+            System.out.println("kATKI");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String wrapText(String text, int lineLength) {
+        StringBuilder sb = new StringBuilder(text);
+
+        int i = 0;
+        while (i + lineLength < sb.length() && (i = sb.lastIndexOf(" ", i + lineLength)) != -1) {
+            sb.replace(i, i + 1, "\n");
+        }
+
+        return sb.toString();
+    }
 
     /**
      * kontrollib, kas kasutaja poolt pakutud täht sobib (ühekohaline ja on täht) ja lisab listi
      * kui ei sobi siis kutsub välja pildi joonistamise
      */
     public static void pakutudTähed(String pakutudTäht){
-        if (pakutudTäht.length() == 1 && Character.isLetter(pakutudTäht.charAt(0))) {
-            pakutudTähedPihtas.add(pakutudTäht);
-            if (!arvatavSõna.toLowerCase(Locale.ROOT).contains(pakutudTäht)) {
-                valestiArvamisiKokku++;
-                joonistaPilt();
-            }
+        if (pakutudTäht.length() == 1 && Character.isLetter(pakutudTäht.charAt(0))) { //kui on ühekohaline ja TÄHT
+            pakutudTähedPihtas.add(pakutudTäht);                //charAt(0) sest täht on ühekohaline niikuinii
+        if (!arvatavSõna.toLowerCase(Locale.ROOT).contains(pakutudTäht)) {
+            valestiArvamisiKokku++;
+            joonistaPilt();
         }
+        } //muud pakkumised ei lähe läbi
     }
 
     /**
@@ -64,7 +100,7 @@ public class Meetodid {
         String võrdlus = peidetudSõna.replace(" ", "");
 
         if (kontrolliKasSamad(arvatavSõna, võrdlus)) { //kui sõna arvatakse enne elude lõppemist ära
-            arvatavaSõnaRida.setText("Arvasid sõna " + arvatavSõna + " ära");
+            arvatavaSõnaRida.setText("Arvasid sõna '" + arvatavSõna + "' ära");
             võidud += 1;
         }
         else if (valestiArvamisiKokku < 7) { //üldine

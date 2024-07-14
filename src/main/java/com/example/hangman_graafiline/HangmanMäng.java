@@ -24,8 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
-
-import static com.example.hangman_graafiline.Meetodid.sõnaPeidetud;
+import static com.example.hangman_graafiline.Meetodid.*;
 
 public class HangmanMäng extends Application {
     public static int valestiArvamisiKokku;
@@ -135,14 +134,27 @@ public class HangmanMäng extends Application {
      */
     private void uusMäng(Stage peaLava2) throws FileNotFoundException {
         arvatavSõna = FailistLugemine.annaJuhuslikSõna();
+        leiaVihje(arvatavSõna.toString());
         valestiArvamisiKokku = 0;
         pakutudTähedPihtas.clear(); //kustutab varasemalt pakutud
         /////////////////////////////////////
-        Text vihjeKast = new Text("SDFGNIVNFVIUNHV");
-        vihjeKast.setFont(Font.font(30));
+        Text vihjeKast = new Text(vihje.toString());
+        vihjeKast.setFont(Font.font(20));
         vihjeKast.setTextAlignment(TextAlignment.CENTER);
         vihjeKast.setFill(Color.BLACK);
         vihjeKast.setVisible(false);
+
+
+        double wrappingWidth = 200;
+        vihjeKast.setWrappingWidth(wrappingWidth);
+
+        if (vihje.length() > 20) {
+            // Split the text into multiple lines
+            String wrappedText = Meetodid.wrapText(vihje.toString(), 20);
+            vihjeKast.setText(wrappedText);
+        }
+        else if (vihje == null)
+            vihjeKast.setText("Vihje puudub");
         /////////////////////////////////////////////////////
 
        võidud = FailistLugemine.getVõidud();
@@ -242,7 +254,6 @@ public class HangmanMäng extends Application {
 
         VBox vihjeElemendid = new VBox(vihjenupp, vihjeKast);
         vihjeElemendid.setPrefSize(200, 50);
-        vihjeElemendid.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
 
         hangmanPaneKeskele.getChildren().addAll(vihjeElemendid,hangmanPane);
         hangmanPaneKeskele.setAlignment(Pos.CENTER);
@@ -250,7 +261,6 @@ public class HangmanMäng extends Application {
         mänguPaikneminePane.getChildren().addAll(sõnaPakutud, pakuTäht, nupud, hangmanPaneKeskele);
         mänguPaikneminePane.setAlignment(Pos.CENTER);
 
-        hangmanPane.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
 
 
         //muudab suurusi
