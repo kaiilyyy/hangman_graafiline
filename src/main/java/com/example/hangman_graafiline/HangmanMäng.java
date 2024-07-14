@@ -3,6 +3,7 @@ package com.example.hangman_graafiline;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -29,6 +30,8 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -50,7 +53,7 @@ public class HangmanMäng extends Application {
     @Override
     public void start(Stage peaLava) throws FileNotFoundException {
         //start screen
-        peaLava.setTitle("hangmäng");
+        peaLava.setTitle("HangMäng");
 
         Button startButton = new Button("Start");
         startButton.setLayoutY(100);
@@ -80,6 +83,15 @@ public class HangmanMäng extends Application {
         Background startBackground = new Background(startBackgroundImage);
 
         startHbox.setBackground(startBackground);
+        
+        Media sound = null;
+        try {
+            sound = new Media(Paths.get("hangmang_soundtrack_1min.mp3").toUri().toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         peaLava.setScene(startScene);
         peaLava.show();
