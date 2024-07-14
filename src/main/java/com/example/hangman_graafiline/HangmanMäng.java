@@ -1,5 +1,16 @@
 package com.example.hangman_graafiline;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Locale;
+
+import static com.example.hangman_graafiline.Meetodid.leiaVihje;
+import static com.example.hangman_graafiline.Meetodid.sõnaPeidetud;
+import static com.example.hangman_graafiline.Meetodid.vihje;
+
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.scene.image.Image;
@@ -12,18 +23,27 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Locale;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
-import static com.example.hangman_graafiline.Meetodid.*;
 
 public class HangmanMäng extends Application {
     public static int valestiArvamisiKokku;
@@ -36,7 +56,52 @@ public class HangmanMäng extends Application {
 
     @Override
     public void start(Stage peaLava) throws FileNotFoundException {
+        //start screen
+        peaLava.setTitle("HangMäng");
 
+        Button startButton = new Button("Start");
+        startButton.setLayoutY(100);
+        startButton.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    mainGame(peaLava);
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        HBox startHbox = new HBox(startButton);
+        startHbox.setAlignment(Pos.BOTTOM_CENTER);
+        startHbox.setPadding(new Insets(0, 0, 100, 0));
+        Scene startScene = new Scene(startHbox, 1000, 600);
+
+        InputStream startBackgroundFile = new FileInputStream("hangmang.jpg");
+        Image startImage = new Image(startBackgroundFile);
+        BackgroundImage startBackgroundImage = new BackgroundImage(startImage,
+                BackgroundRepeat.REPEAT,
+                BackgroundRepeat.REPEAT,
+                BackgroundPosition.CENTER,
+                BackgroundSize.DEFAULT);
+        Background startBackground = new Background(startBackgroundImage);
+
+        startHbox.setBackground(startBackground);
+        
+        Media sound = null;
+        try {
+            sound = new Media(Paths.get("hangmang_soundtrack_1min.mp3").toUri().toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        peaLava.setScene(startScene);
+        peaLava.show();
+    }
+
+    public void mainGame(Stage peaLava) throws FileNotFoundException {
         VBox esimeneJuur = new VBox(20); //ülevalt alla
         esimeneJuur.setAlignment(Pos.CENTER);
         esimeneJuur.setPadding(new Insets(30));
@@ -193,7 +258,7 @@ public class HangmanMäng extends Application {
         katkestaMäng.setOnMouseClicked(event -> {
             peaLava2.close();
             try {
-                start(peaLava2);
+                mainGame(peaLava2);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }

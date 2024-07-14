@@ -1,6 +1,7 @@
 module com.example.hangman_graafiline {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.media;
     requires org.jsoup;
 
 
