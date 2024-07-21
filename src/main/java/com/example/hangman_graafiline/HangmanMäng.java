@@ -140,7 +140,7 @@ public class HangmanMäng extends Application {
                 "kui kasutad vihjet läheb 30 punkti maha \n" +
                 " kui sa ei arva sõna ära siis läheb 50 punkti maha");
         HBox kast = new HBox(text);
-        kast.setStyle("-fx-background-color: beige");
+        kast.setStyle("-fx-background-color: beige"); //n
         Scene juhendiStseen = new Scene(kast);
 
         juhendiLava.setScene(juhendiStseen);
