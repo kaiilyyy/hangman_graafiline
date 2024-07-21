@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static com.example.hangman_graafiline.FailistLugemine.punktisumma;
 import static com.example.hangman_graafiline.Meetodid.leiaVihje;
 import static com.example.hangman_graafiline.Meetodid.sõnaPeidetud;
 import static com.example.hangman_graafiline.Meetodid.vihje;
@@ -15,7 +14,6 @@ import static com.example.hangman_graafiline.Meetodid.vihje;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
@@ -24,7 +22,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -39,11 +36,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
 public class HangmanMäng extends Application {
     public static int valestiArvamisiKokku;
@@ -107,7 +100,7 @@ public class HangmanMäng extends Application {
         Button kustutaSkoor = new Button("Kustuta skoor");
         kustutaSkoor.setFont(Font.font(20));
         kustutaSkoor.setOnAction(event -> {
-            FailistLugemine.nulliSkoor(0, 0, 100, "skoor.txt");
+            FailistLugemine.arvutaSkoor(võidud, kaotused, punktisumma, true);
         });
         Button tühistaNupp = new Button("Katkesta mäng");
         tühistaNupp.setFont(Font.font(20));
@@ -254,7 +247,7 @@ public class HangmanMäng extends Application {
         alustaUuesti.setFont(Font.font(12));
         alustaUuesti.setTextFill(Color.DARKBLUE);
         alustaUuesti.setOnAction(event -> {
-            FailistLugemine.lisaSkoorile(võidud, kaotused, punktisumma, "skoor.txt");
+            FailistLugemine.arvutaSkoor(võidud, kaotused, punktisumma, false);
             Stage uuslava = new Stage();
             try {
                 uusMäng(uuslava);

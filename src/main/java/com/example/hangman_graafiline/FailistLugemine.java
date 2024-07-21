@@ -2,6 +2,8 @@ package com.example.hangman_graafiline;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * rühmatöö 1 raames tehtud klass
@@ -9,10 +11,22 @@ import java.nio.charset.StandardCharsets;
 
 public class FailistLugemine {
     public static String failinimi = "lemmad.txt";
-    public static long failiPikkus = 104188;
     public static int võidud;
     public static int kaotused;
     public static int punktisumma;
+
+    /**
+     *
+     * @param failinimi
+     * @return failipikkus suvalise faili puhul (seega saab nüüd faili vahetada)
+     * @throws IOException
+     */
+
+    private static long loendaRead(String failinimi) throws IOException {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(failinimi), StandardCharsets.UTF_8)) {
+            return reader.lines().count();
+        }
+    }
 
     public FailistLugemine(String failinimi) {
         FailistLugemine.failinimi = failinimi;
@@ -21,13 +35,15 @@ public class FailistLugemine {
     // loeme juhusliku sõna failist ja tagastame
     public static String annaJuhuslikSõna() {
         String sõna = "";
-        long millineRida = (long) (Math.random() * failiPikkus + 1); //genereerib suvalise numbri terve failipikkuse ulatuses
         try {
+            long failiPikkus = loendaRead(failinimi);
+            System.out.println(failiPikkus);
+            long millineRida = (long) (Math.random() * failiPikkus + 1); //genereerib suvalise numbri terve failipikkuse ulatuses
             BufferedReader scanner = new BufferedReader(new FileReader(failinimi, StandardCharsets.UTF_8));
             for (int i = 0; i < millineRida; i++) {
                 scanner.readLine();
-            } //kerib läbi kuni millineRida eelneva reani
-            sõna = scanner.readLine(); //ja siis salvestab selle järgmise sõna
+            }
+            sõna = scanner.readLine();
             scanner.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -39,11 +55,10 @@ public class FailistLugemine {
     public static String annaSkoori(String failinimi) {
         String skoorid;
         try {
-            BufferedReader scanner = new BufferedReader(new FileReader(failinimi)); //sest failis on ainult üks rida
+            BufferedReader scanner = new BufferedReader(new FileReader(failinimi));
             String[] skoorideMassiiv = scanner.readLine().split(" ");
             skoorid = "võidud " + skoorideMassiiv[0];
             skoorid = skoorid + " kaotatud " + skoorideMassiiv[1];
-            //skoorid = "punktisumma" + skoorideMassiiv[2];
             scanner.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -51,12 +66,12 @@ public class FailistLugemine {
         return skoorid;
     }
 
-    //võtab vastu skoorid, mida koguskoorile lisada ja lisab need faili
-    public static void lisaSkoorile(int võidud, int kaotatud, int punktisumma, String failinimi) {
+    public static void arvutaSkoor(int võidud, int kaotatud, int punktisumma, boolean kasNullib) {
         String failinimi2 = "skoor.txt";
-        int uusVõidud = võidud; //kui need ära võtta siis hakkab valesti skoori arvutama
+        int uusVõidud = võidud;
         int uusKaotatud = kaotatud;
         int uusPunktisumma = punktisumma;
+        String uuedAndmed = "";
 
         //loeb failist vana skoori ja lisab uute skooride arvestusse ka vana skoori
         try {
@@ -69,27 +84,12 @@ public class FailistLugemine {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        //kirjutab faili uue skoori (kus sees varasemalt olnud skoorid ka)
-        String midaFaili = uusVõidud + " " + uusKaotatud + " " + uusPunktisumma;
-        try {
-            BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2, false)); //kui true siis hakkab kõrvale kirjutama (valesid) numbreid
-            kirjutaja.write(midaFaili);
-            kirjutaja.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!kasNullib) {
+            uuedAndmed = uusVõidud + " " + uusKaotatud + " " + uusPunktisumma;
         }
-    }
-
-    /**
-     *ükskõik mis failis enne oli, see muudetakse ära 0:0
-     */
-    public static void nulliSkoor(int võidud, int kaotatud, int punktisumma, String failinimi) {
-        String failinimi2 = "skoor.txt";
-        int uusVõidud = 0;
-        int uusKaotatud = 0;
-        int uusPunktisumma = 100;
-
-        String uuedAndmed = uusVõidud + " " + uusKaotatud + " " + uusPunktisumma;
+        else if (kasNullib) {
+            uuedAndmed = "0 0 100";
+        }
         try {
             BufferedWriter kirjutaja = new BufferedWriter(new FileWriter(failinimi2, false));
             kirjutaja.write(uuedAndmed);
@@ -106,10 +106,4 @@ public class FailistLugemine {
     public static int getKaotused() {
         return kaotused;
     }
-
-    public static int getPunktisumma() {
-        return punktisumma;
-    }
 }
-
-

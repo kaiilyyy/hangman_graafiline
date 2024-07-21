@@ -83,29 +83,26 @@ public class Meetodid {
             punktisumma += 100;
             return true;
         }
-        else {
-            return false;
-        }
+        else return false;
     }
 
     /**
      * @param arvatavaSõnaRida pealkirja lahter, mille teksti uuendab
      */
-
     public static void uuendaRida(Label arvatavaSõnaRida) {
         String peidetudSõna = sõnaPeidetud();
         String võrdlus = peidetudSõna.replace(" ", "");
 
-        if (kontrolliKasSamad(arvatavSõna, võrdlus)) { //kui sõna arvatakse enne elude lõppemist ära
+        if (kontrolliKasSamad(arvatavSõna, võrdlus)) {
             arvatavaSõnaRida.setText("Arvasid sõna '" + arvatavSõna + "' ära");
-            võidud += 1;
+            võidud++;
         }
-        else if (valestiArvamisiKokku < 7) { //üldine
+        else if (valestiArvamisiKokku < 7) {
             arvatavaSõnaRida.setText("Sõna: " + sõnaPeidetud());
         }
-        else { //näitab, mis õige sõna oli
+        else {
             arvatavaSõnaRida.setText("Õige sõna oli: " + arvatavSõna);
-            kaotused += 1;
+            kaotused++;
         }
     }
 
