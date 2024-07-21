@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static com.example.hangman_graafiline.FailistLugemine.punktisumma;
 import static com.example.hangman_graafiline.Meetodid.leiaVihje;
 import static com.example.hangman_graafiline.Meetodid.sõnaPeidetud;
 import static com.example.hangman_graafiline.Meetodid.vihje;
@@ -44,7 +45,6 @@ import javafx.util.Duration;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
-
 public class HangmanMäng extends Application {
     public static int valestiArvamisiKokku;
     public static ArrayList<String> pakutudTähedPihtas = new ArrayList<>();
@@ -54,54 +54,9 @@ public class HangmanMäng extends Application {
     public static int kaotused;
     public static int punktisumma;
 
+
     @Override
     public void start(Stage peaLava) throws FileNotFoundException {
-        //start screen
-        peaLava.setTitle("HangMäng");
-
-        Button startButton = new Button("Start");
-        startButton.setLayoutY(100);
-        startButton.setOnAction(new EventHandler<ActionEvent>() {
- 
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    mainGame(peaLava);
-                } catch (Exception e) {
-                }
-            }
-        });
-
-        HBox startHbox = new HBox(startButton);
-        startHbox.setAlignment(Pos.BOTTOM_CENTER);
-        startHbox.setPadding(new Insets(0, 0, 100, 0));
-        Scene startScene = new Scene(startHbox, 1000, 600);
-
-        InputStream startBackgroundFile = new FileInputStream("hangmang.jpg");
-        Image startImage = new Image(startBackgroundFile);
-        BackgroundImage startBackgroundImage = new BackgroundImage(startImage,
-                BackgroundRepeat.REPEAT,
-                BackgroundRepeat.REPEAT,
-                BackgroundPosition.CENTER,
-                BackgroundSize.DEFAULT);
-        Background startBackground = new Background(startBackgroundImage);
-
-        startHbox.setBackground(startBackground);
-        
-        Media sound = null;
-        try {
-            sound = new Media(Paths.get("hangmang_soundtrack_1min.mp3").toUri().toString());
-            MediaPlayer mediaPlayer = new MediaPlayer(sound);
-            mediaPlayer.play();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        peaLava.setScene(startScene);
-        peaLava.show();
-    }
-
-    public void mainGame(Stage peaLava) throws FileNotFoundException {
         VBox esimeneJuur = new VBox(20); //ülevalt alla
         esimeneJuur.setAlignment(Pos.CENTER);
         esimeneJuur.setPadding(new Insets(30));
@@ -115,6 +70,15 @@ public class HangmanMäng extends Application {
                 BackgroundSize.DEFAULT);
         Background background = new Background(backgroundimage);
         esimeneJuur.setBackground(background);
+
+        Media sound;
+        try {
+            sound = new Media(Paths.get("hangmang_soundtrack_1min.mp3").toUri().toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Text pealkiri = new Text("HÄNGMÄNG");
         pealkiri.setFont(Font.font(40));
@@ -130,6 +94,7 @@ public class HangmanMäng extends Application {
         alustaNupp.setOnAction(event -> {
             try {
                 uusMäng(peaLava);
+                näitaJuhend();
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -142,7 +107,7 @@ public class HangmanMäng extends Application {
         Button kustutaSkoor = new Button("Kustuta skoor");
         kustutaSkoor.setFont(Font.font(20));
         kustutaSkoor.setOnAction(event -> {
-            FailistLugemine.nulliSkoor(0, 0, "skoor.txt");
+            FailistLugemine.nulliSkoor(0, 0, 100, "skoor.txt");
         });
         Button tühistaNupp = new Button("Katkesta mäng");
         tühistaNupp.setFont(Font.font(20));
@@ -163,6 +128,23 @@ public class HangmanMäng extends Application {
         peaLava.setMinWidth(300);
 
         peaLava.show();
+    }
+    private void näitaJuhend() {
+        Stage juhendiLava = new Stage();
+        juhendiLava.setTitle("Juhend");
+        juhendiLava.setResizable(false);
+        juhendiLava.setX(500);
+        juhendiLava.setY(200);
+        Text text = new Text("Juhend: \n Kui arvad sõna ära enne elude otsa saamist" +
+                " lisandub punktisummale 100 punkti. \n " +
+                "kui kasutad vihjet läheb 30 punkti maha \n" +
+                " kui sa ei arva sõna ära siis läheb 50 punkti maha");
+        HBox kast = new HBox(text);
+        kast.setStyle("-fx-background-color: beige");
+        Scene juhendiStseen = new Scene(kast);
+
+        juhendiLava.setScene(juhendiStseen);
+        juhendiLava.show();
     }
 
     private void näitabSkoori() {
@@ -188,9 +170,6 @@ public class HangmanMäng extends Application {
         paus.play();
     }
 
-    /**
-     * põhiline aken, kus toimub kogu mängu sisu
-     */
     private void uusMäng(Stage peaLava2) throws FileNotFoundException {
         arvatavSõna = FailistLugemine.annaJuhuslikSõna();
         leiaVihje(arvatavSõna.toString());
@@ -258,7 +237,7 @@ public class HangmanMäng extends Application {
         katkestaMäng.setOnMouseClicked(event -> {
             peaLava2.close();
             try {
-                mainGame(peaLava2);
+                start(peaLava2);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -337,7 +316,7 @@ public class HangmanMäng extends Application {
         });
         peaLava2.setMinHeight(550); //sellest väiksemaks ei lähe
         peaLava2.setMinWidth(450);
-        peaLava2.setTitle("Hängmäng");
+        peaLava2.setTitle("Hangmäng");
     }
     public static void main(String[] args) {
         launch(args);

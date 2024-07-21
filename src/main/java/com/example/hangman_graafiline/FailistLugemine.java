@@ -1,14 +1,7 @@
 package com.example.hangman_graafiline;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-
-import static com.example.hangman_graafiline.HangmanMäng.punktisumma;
 
 /**
  * rühmatöö 1 raames tehtud klass
@@ -19,7 +12,7 @@ public class FailistLugemine {
     public static long failiPikkus = 104188;
     public static int võidud;
     public static int kaotused;
-    //public static int punktisumma;
+    public static int punktisumma;
 
     public FailistLugemine(String failinimi) {
         FailistLugemine.failinimi = failinimi;
@@ -90,7 +83,7 @@ public class FailistLugemine {
     /**
      *ükskõik mis failis enne oli, see muudetakse ära 0:0
      */
-    public static void nulliSkoor(int võidud, int kaotatud, String failinimi) {
+    public static void nulliSkoor(int võidud, int kaotatud, int punktisumma, String failinimi) {
         String failinimi2 = "skoor.txt";
         int uusVõidud = 0;
         int uusKaotatud = 0;
