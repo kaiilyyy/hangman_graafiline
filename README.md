@@ -1,0 +1,4 @@
+- replace lemmad.txt with database
+- add counting time
+- generates **level of difficulty** of the word according to the usual guessing time (ML)
+- web page (WINTER)
